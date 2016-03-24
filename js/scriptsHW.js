@@ -18,8 +18,9 @@ $(document).ready(function(){
 		});
 
 //Get GENRES
-	var genreURl = base_url + "/genre/movie/list" + apiKey;
-	$.getJSON(genreURl, function(configData){
+	var genreURl = baseURL + "genre/movie/list" + apiKey;
+	$.getJSON(genreURl, function(genreResult){
+		console.log(genreResult.genres);
 		});
 
 //BUILD ARRAY FOR TYPE AHEAD
@@ -40,7 +41,6 @@ $(document).ready(function(){
 						}
 					});			
 				});
-				console.log(arrayToSearch.length);
 			}
 		}
 	});
@@ -65,14 +65,12 @@ $(document).ready(function(){
 					}
 				}
 			});
-			$("#posters").html(newHTML);
-			getIsotope();
+			$("#poster-grid").html(newHTML);
+			// getIsotope();
 		});
-
-		$("#comedy-filter").click(function(){
-			$("#posters").isotope({filter: ".comedy"})
-		});
-
+		// $("#comedy-filter").click(function(){
+		// 	$("#poster-grid").isotope({filter: ".comedy"})
+		// });
 	});
 
 
@@ -113,7 +111,7 @@ $(document).ready(function(){
 function getIsotope(){
 	$('#poster-grid').isotope({
           // options
-          itemSelector: '.now-playing',
+          itemSelector: '.movie-poster',
           layoutMode: 'fitRows'
         });
 }
