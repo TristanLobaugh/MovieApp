@@ -7,6 +7,7 @@ $(document).ready(function(){
 	var moviesToSearch = [];
 	var arrayToSearch = [];
 	var matches = [];
+	var genreArray = [];
 	var nowPlaying = baseURL + "movie/now_playing" + apiKey;
 	var configURL = baseURL + "configuration" + apiKey;
 	var searchURL;
@@ -20,8 +21,19 @@ $(document).ready(function(){
 //Get GENRES
 	var genreURl = baseURL + "genre/movie/list" + apiKey;
 	$.getJSON(genreURl, function(genreResult){
-		console.log(genreResult.genres);
-		});
+		$(genreResult.genres).each(function(){
+			var genreID = this.id;
+			var genreName = this.name;
+			genreArray[genreID] = genreName;
+		})
+		var genreHTML = '';
+		for(i=0; i<genreArray.length; i++){
+			if(genreArray[i] != undefined){
+				genreHTML += '<input type="button" id="'+genreArray[i]+'" class="btn btn-default" value="'+genreArray[i]+'">'
+			}
+		}
+		$('#genre-buttons').html(genreHTML);
+	});
 
 //BUILD ARRAY FOR TYPE AHEAD
 	$("#searchInput").keyup(function(){
@@ -49,28 +61,36 @@ $(document).ready(function(){
 		searchFor = $("#searchInput").val();
 		searchURL = baseURL + "search/" + selected + apiKey + "&query=" + encodeURI(searchFor) + "&page=1";
 		$.getJSON(searchURL, function(movieData){
-			// console.log(movieData.results);
+			console.log(movieData.results);
 			$(movieData.results).each(function(){
 				if(this.profile_path === null){
-					newHTML += "<div class=' movie-poster col-sm-3 poster-item'>" + this.name + "</div>";
+					newHTML += "<div class='" + findGenres(this) + "movie-poster col-sm-3 poster-item'>" + this.name + "</div>";
 				}else if(this.poster_path === null && this.media_type == "tv"){
-					newHTML += "<div class=' movie-poster col-sm-3 poster-item'>" + this.original_name + "</div>";
+					newHTML += "<div class='" + findGenres(this) + "movie-poster col-sm-3 poster-item'>" + this.original_name + "</div>";
 				}else if(this.poster_path === null && this.media_type == "movie"){
-					newHTML += "<div class=' movie-poster col-sm-3 poster-item'>" + this.original_title + "</div>";
+					newHTML += "<div class='" + findGenres(this) + "movie-poster col-sm-3 poster-item'>" + this.original_title + "</div>";
 				}else	{
 					if(this.media_type == "person" || selected == "person"){
-						newHTML += "<div class=' movie-poster col-sm-3 poster-item'><img src=" + imagePath + "w300" + this.profile_path + "'></div>";
+						newHTML += "<div class='" + findGenres(this) + "movie-poster col-sm-3 poster-item'><img src=" + imagePath + "w300" + this.profile_path + "'></div>";
 					}else{
-						newHTML += "<div class=' movie-poster col-sm-3 poster-item'><img src=" + imagePath + "w300" + this.poster_path + "'></div>";
+						newHTML += "<div class='" + findGenres(this) + "movie-poster col-sm-3 poster-item'><img src=" + imagePath + "w300" + this.poster_path + "'></div>";
 					}
+				}
+				function findGenres(dataObject){
+					var genreList = "";
+					$(dataObject.genre_ids).each(function(){
+						genreList += genreArray[this] + " ";
+					});
+					return genreList;
 				}
 			});
 			$("#poster-grid").html(newHTML);
-			// getIsotope();
+			getIsotope();
 		});
-		// $("#comedy-filter").click(function(){
-		// 	$("#poster-grid").isotope({filter: ".comedy"})
-		// });
+		//CLICK LISTENER FOR GENRE BUTTONS TO ACTIVATE ISOTOPE
+		$("#genre-buttons .btn").click(function(){
+			$("#poster-grid").isotope({filter: "." + this.value});		
+		});
 	});
 
 
@@ -108,14 +128,14 @@ $(document).ready(function(){
 	  source: substringMatcher(arrayToSearch)
 	});
 
-function getIsotope(){
-	$('#poster-grid').isotope({
-          // options
-          itemSelector: '.movie-poster',
-          layoutMode: 'fitRows'
-        });
-}
-
-
+	function getIsotope(){
+		var theGrid = $('#poster-grid').isotope({
+	          itemSelector: '.movie-poster',
+	          layoutMode: 'fitRows'
+	        });
+		theGrid.imagesLoaded().progress(function(){
+	  		theGrid.isotope('layout');
+		});
+	}
 });
-	
+
