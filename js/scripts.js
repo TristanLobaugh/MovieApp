@@ -16,7 +16,6 @@ $(document).ready(function(){
 		});
 
 	$("#searchButton").click(function(){
-
 		searchFor = $("#searchInput").val();
 		console.log(searchFor);
 		movieSearchURL = baseURL + "search/movie" + apiKey + "&query=" + searchFor + "&page 1";
@@ -44,12 +43,12 @@ $(document).ready(function(){
 //TYPEAHEAD STUFF
 
 	//ASSIGN TOP 20 movies to SEARCH ARRAY
-	$.getJSON(nowPlaying, function(movieData){
-		var movieImage = movieData.results;
-		$(movieData.results).each(function(){
-			moviesToSearch.push(this.original_title);
-		});
-	});
+	// $.getJSON(nowPlaying, function(movieData){
+	// 	var movieImage = movieData.results;
+	// 	$(movieData.results).each(function(){
+	// 		moviesToSearch.push(this.original_title);
+	// 	});
+	// });
 
 	var substringMatcher = function(strs) {
 	  return function findMatches(q, cb) {
