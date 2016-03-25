@@ -68,9 +68,9 @@ $(document).ready(function(){
 					newHTML += "<div class='" + findGenres(this) + "movie-poster col-sm-3 poster-item'>" + this.original_title + "</div>";
 				}else	{
 					if(this.media_type == "person" || selected == "person"){
-						newHTML += "<div class='" + findGenres(this) + "movie-poster col-sm-3 poster-item'><img src=" + imagePath + "w300" + this.profile_path + "'></div>";
+						newHTML += "<div class='" + findGenres(this) + "movie-poster col-sm-3' data-toggle='modal' data-target='#myModal' poster-item><img src=" + imagePath + "w300" + this.profile_path + " class='launch-modal'></div>";
 					}else{
-						newHTML += "<div class='" + findGenres(this) + "movie-poster col-sm-3 poster-item'><img src=" + imagePath + "w300" + this.poster_path + "'></div>";
+						newHTML += "<div class='" + findGenres(this) + "movie-poster col-sm-3' data-toggle='modal' data-target='#myModal' poster-item><img src=" + imagePath + "w300" + this.poster_path + " class='launch-modal'></div>";
 					}
 				}
 				function findGenres(dataObject){
@@ -83,6 +83,12 @@ $(document).ready(function(){
 			});
 			$("#poster-grid").html(newHTML);
 			getIsotope();
+			//Click listner to launch modal
+			$(".launch-modal").click(function(){
+				console.log(this);
+				var currImage = ($(this)[0].src);
+				$(".modal-body img")[0].src = currImage;
+			});
 		});
 		//CLICK LISTENER FOR GENRE BUTTONS TO ACTIVATE ISOTOPE
 		$("#genre-buttons .btn").click(function(){
@@ -91,7 +97,7 @@ $(document).ready(function(){
 	});
 
 
-//TYPEAHEAD
+	//TYPEAHEAD
 	var substringMatcher = function(strs) {
 	  return function findMatches(q, cb) {
 	  var matches, substringRegex;
