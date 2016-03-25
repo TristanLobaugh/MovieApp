@@ -23,14 +23,7 @@ $(document).ready(function(){
 			var genreID = this.id;
 			var genreName = this.name;
 			genreArray[genreID] = genreName;
-		})
-		var genreHTML = '';
-		for(i=0; i<genreArray.length; i++){
-			if(genreArray[i] != undefined){
-				genreHTML += '<input type="button" id="'+genreArray[i]+'" class="btn btn-default" value="'+genreArray[i]+'">'
-			}
-		}
-		$('#genre-buttons').html(genreHTML);
+		});
 	});
 
 //BUILD ARRAY FOR TYPE AHEAD
@@ -56,6 +49,8 @@ $(document).ready(function(){
 	});
 
 	$("#searchButton").click(function(){
+		generateGenreButtons();
+		selected = $("select option:selected").attr("value");
 		searchFor = $("#searchInput").val();
 		searchURL = baseURL + "search/" + selected + apiKey + "&query=" + encodeURI(searchFor) + "&page=1";
 		$.getJSON(searchURL, function(movieData){
@@ -73,19 +68,11 @@ $(document).ready(function(){
 						newHTML += "<div class='" + findGenres(this) + "movie-poster col-sm-3' data-toggle='modal' data-target='#myModal' poster-item><img src=" + imagePath + "w300" + this.poster_path + " class='launch-modal'></div>";
 					}
 				}
-				function findGenres(dataObject){
-					var genreList = "";
-					$(dataObject.genre_ids).each(function(){
-						genreList += genreArray[this] + " ";
-					});
-					return genreList;
-				}
 			});
 			$("#poster-grid").html(newHTML);
 			getIsotope();
 			//Click listner to launch modal
 			$(".launch-modal").click(function(){
-				console.log(this);
 				var currImage = ($(this)[0].src);
 				$(".modal-body img")[0].src = currImage;
 			});
@@ -101,13 +88,10 @@ $(document).ready(function(){
 	var substringMatcher = function(strs) {
 	  return function findMatches(q, cb) {
 	  var matches, substringRegex;
-
 	    // an array that will be populated with substring matches
 	    matches = [];
-
 	    // regex used to determine if a string contains the substring `q`
 	    substrRegex = new RegExp(q, 'i');
-
 	    // iterate through the pool of strings and for any string that
 	    // contains the substring `q`, add it to the `matches` array
 	    $.each(strs, function(i, str) {
@@ -115,7 +99,6 @@ $(document).ready(function(){
 	        matches.push(str);
 	      }
 	    });
-
 	    cb(matches);
 	  };
 	};
@@ -128,6 +111,8 @@ $(document).ready(function(){
 	  name: 'arrayToSearch',
 	  source: substringMatcher(arrayToSearch)
 	});
+
+	//FUNCTIONS
 	//Loads Isotope after all the images have loaded
 	function getIsotope(){
 		var theGrid = $("#poster-grid").imagesLoaded(function(){
@@ -136,6 +121,24 @@ $(document).ready(function(){
 		        layoutMode: 'fitRows'
 			  });
 			});
+	}
+	//Pull the list of genres from genreArray, genereates the genre buttons an adds them to the http
+	function generateGenreButtons(){
+		var genreHTML = '';
+		for(i=0; i<genreArray.length; i++){
+			if(genreArray[i] != undefined){
+				genreHTML += '<input type="button" id="'+genreArray[i]+'" class="btn btn-default" value="'+genreArray[i]+'">'
+			}
+		}
+		$('#genre-buttons').html(genreHTML);
+	}
+	//Gets the genres for the indivdual selections and adds them to a list so they can be added to the class list when the hhtp gets created
+	function findGenres(dataObject){
+		var genreList = "";
+		$(dataObject.genre_ids).each(function(){
+			genreList += genreArray[this] + " ";
+		});
+		return genreList;
 	}
 });
 
