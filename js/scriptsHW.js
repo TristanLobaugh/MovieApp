@@ -6,12 +6,10 @@ $(document).ready(function(){
 	var apiKey = "?api_key=e9ddb24aed6d48c4342303aba5269e28";
 	var moviesToSearch = [];
 	var arrayToSearch = [];
-	var matches = [];
 	var genreArray = [];
 	var nowPlaying = baseURL + "movie/now_playing" + apiKey;
 	var configURL = baseURL + "configuration" + apiKey;
 	var searchURL;
-	var substringRegex;
 	var selected;
 
 	$.getJSON(configURL, function(configData){
@@ -61,7 +59,6 @@ $(document).ready(function(){
 		searchFor = $("#searchInput").val();
 		searchURL = baseURL + "search/" + selected + apiKey + "&query=" + encodeURI(searchFor) + "&page=1";
 		$.getJSON(searchURL, function(movieData){
-			console.log(movieData.results);
 			$(movieData.results).each(function(){
 				if(this.profile_path === null){
 					newHTML += "<div class='" + findGenres(this) + "movie-poster col-sm-3 poster-item'>" + this.name + "</div>";
@@ -95,10 +92,9 @@ $(document).ready(function(){
 
 
 //TYPEAHEAD
-
 	var substringMatcher = function(strs) {
 	  return function findMatches(q, cb) {
-	   // var matches, substringRegex;
+	  var matches, substringRegex;
 
 	    // an array that will be populated with substring matches
 	    matches = [];
@@ -117,7 +113,6 @@ $(document).ready(function(){
 	    cb(matches);
 	  };
 	};
-
 	$('#search-bar .typeahead').typeahead({
 	  hint: true,
 	  highlight: true,
@@ -127,15 +122,14 @@ $(document).ready(function(){
 	  name: 'arrayToSearch',
 	  source: substringMatcher(arrayToSearch)
 	});
-
+	//Loads Isotope after all the images have loaded
 	function getIsotope(){
-		var theGrid = $('#poster-grid').isotope({
-	          itemSelector: '.movie-poster',
-	          layoutMode: 'fitRows'
-	        });
-		theGrid.imagesLoaded().progress(function(){
-	  		theGrid.isotope('layout');
-		});
+		var theGrid = $("#poster-grid").imagesLoaded(function(){
+	  		theGrid.isotope({
+			    itemSelector: '.movie-poster',
+		        layoutMode: 'fitRows'
+			  });
+			});
 	}
 });
 
