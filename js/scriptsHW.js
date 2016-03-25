@@ -79,7 +79,8 @@ $(document).ready(function(){
 		});
 		//CLICK LISTENER FOR GENRE BUTTONS TO ACTIVATE ISOTOPE
 		$("#genre-buttons .btn").click(function(){
-			$("#poster-grid").isotope({filter: "." + this.value});		
+			console.log(this.id);
+			$("#poster-grid").isotope({filter: "." + this.id});		
 		});
 	});
 
@@ -127,7 +128,7 @@ $(document).ready(function(){
 		var genreHTML = '';
 		for(i=0; i<genreArray.length; i++){
 			if(genreArray[i] != undefined){
-				genreHTML += '<input type="button" id="'+genreArray[i]+'" class="btn btn-default" value="'+genreArray[i]+'">'
+				genreHTML += '<input type="button" id="' + genreArray[i].replace(" ", "-") + '" class="btn btn-default" value="'+genreArray[i] + '">'
 			}
 		}
 		$('#genre-buttons').html(genreHTML);
@@ -136,7 +137,7 @@ $(document).ready(function(){
 	function findGenres(dataObject){
 		var genreList = "";
 		$(dataObject.genre_ids).each(function(){
-			genreList += genreArray[this] + " ";
+			genreList += genreArray[this].replace(" ", "-") + " ";
 		});
 		return genreList;
 	}
