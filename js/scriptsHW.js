@@ -14,6 +14,7 @@ $(document).ready(function(){
 
 	$.getJSON(configURL, function(configData){
 		imagePath = configData.images.base_url;
+		console.log(imagePath);
 		});
 
 //Get GENRES
